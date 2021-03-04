@@ -1,3 +1,13 @@
+let KEY_DOWN_PRESSED = false;
+let KEY_UP_PRESSED = false;
+let KEY_LEFT_PRESSED = false;
+let KEY_RIGHT_PRESSED = false;
+
+let MOUSE_X = 0;
+let MOUSE_Y = 0;
+
+let playerSpeed = 10.0;
+
 let instructions = `reset
 translate -8 0 -8
 plane 16 16
@@ -90,6 +100,7 @@ const camera = new THREE.PerspectiveCamera(
   1,
   1024
 );
+
 camera.position.y = 5;
 camera.position.z = 15;
 scene.add(camera);
