@@ -1,13 +1,3 @@
-let KEY_DOWN_PRESSED = false;
-let KEY_UP_PRESSED = false;
-let KEY_LEFT_PRESSED = false;
-let KEY_RIGHT_PRESSED = false;
-
-let MOUSE_X = 0;
-let MOUSE_Y = 0;
-
-let playerSpeed = 10.0;
-
 let instructions = `reset
 translate -8 0 -8
 plane 16 16
@@ -35,12 +25,15 @@ const MAX_DEPTH = 256;
 
 const volume = new Uint8Array(MAX_WIDTH * MAX_HEIGHT * MAX_DEPTH);
 
+//zet een waarde
 const vset = (x, y, z) => {
   if (x < 0 || x >= MAX_WIDTH) return;
   if (y < 0 || y >= MAX_HEIGHT) return;
   if (z < 0 || z >= MAX_DEPTH) return;
   volume[x * (MAX_HEIGHT * MAX_DEPTH) + y * MAX_DEPTH + z] = 1;
 };
+
+//ontzet een waarde
 const vunset = (x, y, z) => {
   if (x < 0 || x >= MAX_WIDTH) return;
   if (y < 0 || y >= MAX_HEIGHT) return;
@@ -48,6 +41,7 @@ const vunset = (x, y, z) => {
   volume[x * (MAX_HEIGHT * MAX_DEPTH) + y * MAX_DEPTH + z] = 0;
 };
 
+//checkt of de waarde aanstaat (true of false, 0 of 1)
 const vfull = (x, y, z) => {
   if (x < 0 || x >= MAX_WIDTH) return false;
   if (y < 0 || y >= MAX_HEIGHT) return false;
@@ -130,6 +124,7 @@ function setError(error) {
   console.error();
 }
 
+// stuk dat vooral nog zal veranderen
 function buildVolume() {
   volume.fill(0);
 
