@@ -1,21 +1,8 @@
 let instructions = `reset
-translate -8 0 -8
-plane 16 16
-
-reset
-translate -4 2 -4
-plane 8 8
-
-reset
-translate -2 4 -2
-plane 4 4
-
-reset
-translate -1 6 -1
-plane 2 2
-
-extrude 2
-`;
+lsys FF+FFFFF
+translate 10 0 0
+lsys FF+FFF+FFFFF
+extrude 5`;
 
 document.getElementById("code").textContent = instructions;
 
@@ -25,15 +12,12 @@ const MAX_DEPTH = 256;
 
 const volume = new Uint8Array(MAX_WIDTH * MAX_HEIGHT * MAX_DEPTH);
 
-//zet een waarde
 const vset = (x, y, z) => {
   if (x < 0 || x >= MAX_WIDTH) return;
   if (y < 0 || y >= MAX_HEIGHT) return;
   if (z < 0 || z >= MAX_DEPTH) return;
   volume[x * (MAX_HEIGHT * MAX_DEPTH) + y * MAX_DEPTH + z] = 1;
 };
-
-//ontzet een waarde
 const vunset = (x, y, z) => {
   if (x < 0 || x >= MAX_WIDTH) return;
   if (y < 0 || y >= MAX_HEIGHT) return;
@@ -41,7 +25,6 @@ const vunset = (x, y, z) => {
   volume[x * (MAX_HEIGHT * MAX_DEPTH) + y * MAX_DEPTH + z] = 0;
 };
 
-//checkt of de waarde aanstaat (true of false, 0 of 1)
 const vfull = (x, y, z) => {
   if (x < 0 || x >= MAX_WIDTH) return false;
   if (y < 0 || y >= MAX_HEIGHT) return false;
@@ -94,7 +77,6 @@ const camera = new THREE.PerspectiveCamera(
   1,
   1024
 );
-
 camera.position.y = 5;
 camera.position.z = 15;
 scene.add(camera);
@@ -124,7 +106,6 @@ function setError(error) {
   console.error();
 }
 
-// stuk dat vooral nog zal veranderen
 function buildVolume() {
   volume.fill(0);
 
@@ -191,10 +172,38 @@ function buildVolume() {
       tx = Math.round(MAX_WIDTH / 2);
       ty = Math.round(MAX_HEIGHT / 2);
       tz = Math.round(MAX_DEPTH / 2);
+    } else if (command === "lsys") {
+      rule = args[0];
+      buildLSystem(rule, tx, ty, tz);
     } else if (command.trim() === "" || command.trim()[0] === "#") {
       // Empty line or comment
     } else {
       setError(`Line ${line}: unknown command "${command}".`);
+    }
+  }
+}
+
+function buildLSystem(rule, startTx, startTy, startTz) {
+  let tx = startTx;
+  let ty = startTy;
+  let tz = startTz;
+
+  let angle = 0;
+
+  for (let letter of rule) {
+    if (letter === "F") {
+      vset(tx, ty, tz);
+      tx += Math.round(Math.cos(angle));
+      ty += 0;
+      tz += Math.round(Math.sin(angle));
+    } else if (letter === "f") {
+      tx += Math.round(Math.cos(angle));
+      ty += 0;
+      tz += Math.round(Math.sin(angle));
+    } else if (letter === "+") {
+      angle += Math.PI / 2;
+    } else if (letter === "-") {
+      angle -= Math.PI / 2;
     }
   }
 }
@@ -207,6 +216,7 @@ function buildGeometry() {
   }
   geometryGroup.position.set(-MAX_WIDTH / 2, -MAX_HEIGHT / 2, -MAX_DEPTH / 2);
 
+  // buildLSystem();
   buildVolume();
 
   let boxCount = 0;
