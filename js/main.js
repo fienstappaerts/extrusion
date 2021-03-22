@@ -34,6 +34,9 @@ const vfull = (x, y, z) => {
 
 const canvas = document.querySelector("canvas.webgl");
 const scene = new THREE.Scene();
+
+scene.background = new THREE.Color("white");
+
 const textureLoader = new THREE.TextureLoader();
 const matcapTexture = textureLoader.load("./img/matcap_1.png");
 
@@ -41,10 +44,14 @@ const geometryGroup = new THREE.Group();
 scene.add(geometryGroup);
 
 const boxGeometry = new THREE.BoxBufferGeometry(0.98, 0.98, 0.98);
-const boxMaterial = new THREE.MeshMatcapMaterial();
-boxMaterial.matcap = matcapTexture;
+// const boxMaterial = new THREE.MeshMatcapMaterial();
+// boxMaterial.matcap = matcapTexture;
+const boxMaterial = new THREE.MeshBasicMaterial({
+  color: "red",
+});
+boxMaterial.wireframe = true;
 
-const gridHelper = new THREE.GridHelper(1000, 1000, 0x666666, 0x333333);
+const gridHelper = new THREE.GridHelper(500, 500, "lightgrey", "lightgrey");
 scene.add(gridHelper);
 
 buildGeometry();
