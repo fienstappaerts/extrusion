@@ -12,11 +12,13 @@ const MAX_DEPTH = 256;
 
 const volume = new Uint8Array(MAX_WIDTH * MAX_HEIGHT * MAX_DEPTH);
 
+let currentGroup = 1;
+
 const vset = (x, y, z) => {
   if (x < 0 || x >= MAX_WIDTH) return;
   if (y < 0 || y >= MAX_HEIGHT) return;
   if (z < 0 || z >= MAX_DEPTH) return;
-  volume[x * (MAX_HEIGHT * MAX_DEPTH) + y * MAX_DEPTH + z] = 1;
+  volume[x * (MAX_HEIGHT * MAX_DEPTH) + y * MAX_DEPTH + z] = currentGroup;
 };
 const vunset = (x, y, z) => {
   if (x < 0 || x >= MAX_WIDTH) return;
@@ -29,7 +31,18 @@ const vfull = (x, y, z) => {
   if (x < 0 || x >= MAX_WIDTH) return false;
   if (y < 0 || y >= MAX_HEIGHT) return false;
   if (z < 0 || z >= MAX_DEPTH) return false;
-  return volume[x * (MAX_HEIGHT * MAX_DEPTH) + y * MAX_DEPTH + z] === 1;
+  return volume[x * (MAX_HEIGHT * MAX_DEPTH) + y * MAX_DEPTH + z] !== 0;
+};
+
+const vingroup = (x, y, z, group) => {
+  if (x < 0 || x >= MAX_WIDTH) return false;
+  if (y < 0 || y >= MAX_HEIGHT) return false;
+  if (z < 0 || z >= MAX_DEPTH) return false;
+  if (group === -1) {
+    return volume[x * (MAX_HEIGHT * MAX_DEPTH) + y * MAX_DEPTH + z] !== 0;
+  } else {
+    return volume[x * (MAX_HEIGHT * MAX_DEPTH) + y * MAX_DEPTH + z] === group;
+  }
 };
 
 const canvas = document.querySelector("canvas.webgl");
@@ -115,6 +128,7 @@ function setError(error) {
 
 function buildVolume() {
   volume.fill(0);
+  currentGroup = 1;
 
   const lines = instructions.trim().split("\n");
 
@@ -128,6 +142,7 @@ function buildVolume() {
     if (command === "box") {
       if (args.length !== 3) {
         setError(`Line ${line}: box needs three arguments, e.g. box 2 4 5`);
+        return;
       }
       const width = parseInt(args[0]);
       const height = parseInt(args[1]);
@@ -142,6 +157,7 @@ function buildVolume() {
     } else if (command === "plane") {
       if (args.length !== 2) {
         setError(`Line ${line}: plane needs two arguments, e.g. plane 4 8`);
+        return;
       }
       const width = parseInt(args[0]);
       const depth = parseInt(args[1]);
@@ -151,14 +167,31 @@ function buildVolume() {
         }
       }
     } else if (command === "extrude") {
-      if (args.length !== 1) {
-        setError(`Line ${line}: extrude needs one arguments, e.g. extrude 10`);
+      if (args.length !== 1 && args.length !== 3) {
+        setError(
+          `Line ${line}: extrude needs one or three arguments, e.g. 'extrude 10' or 'extrude 10 group 3'`
+        );
+        return;
+      }
+      let groupToCheck = -1;
+      if (args.length === 3) {
+        if (args[1] !== "group") {
+          setError(
+            `Line ${line}: extrude needs a group argument, e.g. 'extrude 10 group 3'`
+          );
+          return;
+        }
+        groupToCheck = parseInt(args[2]);
+        if (groupToCheck === 0) {
+          setError(`Line ${line}: extrude group can not be zero.`);
+          return;
+        }
       }
       const height = parseInt(args[0]);
       for (let x = 0; x < MAX_WIDTH; x++) {
         for (let y = MAX_HEIGHT - 1; y >= 0; y--) {
           for (let z = 0; z < MAX_DEPTH; z++) {
-            if (vfull(x, y, z)) {
+            if (vingroup(x, y, z, groupToCheck)) {
               for (let yy = y; yy < y + height; yy++) {
                 vset(x, yy, z);
               }
@@ -171,6 +204,7 @@ function buildVolume() {
         setError(
           `Line ${line}: translate needs three arguments, e.g. translate 2 4 5`
         );
+        return;
       }
       tx += parseInt(args[0]);
       ty += parseInt(args[1]);
@@ -182,10 +216,17 @@ function buildVolume() {
     } else if (command === "lsys") {
       rule = args[0];
       buildLSystem(rule, tx, ty, tz);
+    } else if (command === "group") {
+      if (args.length !== 1) {
+        setError(`Line ${line}: group needs one argument, e.g. group 5`);
+        return;
+      }
+      currentGroup = parseInt(args[0]);
     } else if (command.trim() === "" || command.trim()[0] === "#") {
       // Empty line or comment
     } else {
       setError(`Line ${line}: unknown command "${command}".`);
+      return;
     }
   }
 }
