@@ -198,7 +198,7 @@ function buildLSystem(rule, startTx, startTy, startTz) {
   let angle = 0;
 
   for (let letter of rule) {
-    if (letter === "F") {<
+    if (letter === "F") {
       vset(tx, ty, tz);
       tx += Math.round(Math.cos(angle));
       ty += 0;
