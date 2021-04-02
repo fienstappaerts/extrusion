@@ -47,7 +47,7 @@ const boxGeometry = new THREE.BoxBufferGeometry(0.98, 0.98, 0.98);
 // const boxMaterial = new THREE.MeshMatcapMaterial();
 // boxMaterial.matcap = matcapTexture;
 const boxMaterial = new THREE.MeshBasicMaterial({
-  color: "blue",
+  color: "black",
 });
 boxMaterial.wireframe = true;
 
