@@ -37,8 +37,8 @@ const scene = new THREE.Scene();
 
 scene.background = new THREE.Color("white");
 
-const textureLoader = new THREE.TextureLoader();
-const matcapTexture = textureLoader.load("./img/matcap_1.png");
+// const textureLoader = new THREE.TextureLoader();
+// const matcapTexture = textureLoader.load("./img/matcap_1.png");
 
 const geometryGroup = new THREE.Group();
 scene.add(geometryGroup);
@@ -47,7 +47,7 @@ const boxGeometry = new THREE.BoxBufferGeometry(0.98, 0.98, 0.98);
 // const boxMaterial = new THREE.MeshMatcapMaterial();
 // boxMaterial.matcap = matcapTexture;
 const boxMaterial = new THREE.MeshBasicMaterial({
-  color: "red",
+  color: "blue",
 });
 boxMaterial.wireframe = true;
 
