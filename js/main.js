@@ -50,19 +50,14 @@ const scene = new THREE.Scene();
 
 scene.background = new THREE.Color("white");
 
-// const textureLoader = new THREE.TextureLoader();
-// const matcapTexture = textureLoader.load("./img/matcap_1.png");
+const textureLoader = new THREE.TextureLoader();
+const matcapTexture = textureLoader.load("./img/matcap_1.png");
 
 const geometryGroup = new THREE.Group();
 scene.add(geometryGroup);
 
 const boxGeometry = new THREE.BoxBufferGeometry(0.98, 0.98, 0.98);
-// const boxMaterial = new THREE.MeshMatcapMaterial();
-// boxMaterial.matcap = matcapTexture;
-const boxMaterial = new THREE.MeshBasicMaterial({
-  color: "black",
-});
-boxMaterial.wireframe = true;
+let boxMaterial;
 
 const gridHelper = new THREE.GridHelper(500, 500, "lightgrey", "lightgrey");
 scene.add(gridHelper);
@@ -129,6 +124,8 @@ function setError(error) {
 function buildVolume() {
   volume.fill(0);
   currentGroup = 1;
+  boxMaterial = new THREE.MeshMatcapMaterial();
+  boxMaterial.matcap = matcapTexture;
 
   const lines = instructions.trim().split("\n");
 
@@ -222,6 +219,23 @@ function buildVolume() {
         return;
       }
       currentGroup = parseInt(args[0]);
+    } else if (command === "material") {
+      if (args.length !== 1) {
+        setError(
+          `Line ${line}: material needs one argument, e.g. material wireframe`
+        );
+        return;
+      }
+      if (args[0] === "wireframe") {
+        boxMaterial = new THREE.MeshBasicMaterial({ color: "red" });
+        boxMaterial.wireframe = true;
+      } else if (args[0] === "matcap") {
+        boxMaterial = new THREE.MeshMatcapMaterial();
+        boxMaterial.matcap = matcapTexture;
+      } else {
+        setError(`Line ${line}: material got an unknown argument.`);
+        return;
+      }
     } else if (command.trim() === "" || command.trim()[0] === "#") {
       // Empty line or comment
     } else {
