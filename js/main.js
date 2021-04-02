@@ -141,7 +141,7 @@ function buildVolume() {
       }
     } else if (command === "plane") {
       if (args.length !== 2) {
-        setError(`Line ${line}: plane needs three arguments, e.g. plane 4 8`);
+        setError(`Line ${line}: plane needs two arguments, e.g. plane 4 8`);
       }
       const width = parseInt(args[0]);
       const depth = parseInt(args[1]);
@@ -198,7 +198,7 @@ function buildLSystem(rule, startTx, startTy, startTz) {
   let angle = 0;
 
   for (let letter of rule) {
-    if (letter === "F") {
+    if (letter === "F") {<
       vset(tx, ty, tz);
       tx += Math.round(Math.cos(angle));
       ty += 0;
