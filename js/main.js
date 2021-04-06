@@ -51,7 +51,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color("white");
 
 const textureLoader = new THREE.TextureLoader();
-const matcapTexture = textureLoader.load("./img/matcap_1.png");
+const matcapTexture = textureLoader.load("./img/matcap_6.png");
 
 const geometryGroup = new THREE.Group();
 scene.add(geometryGroup);
@@ -227,11 +227,13 @@ function buildVolume() {
         return;
       }
       if (args[0] === "wireframe") {
-        boxMaterial = new THREE.MeshBasicMaterial({ color: "red" });
+        boxMaterial = new THREE.MeshBasicMaterial({ color: "blue" });
         boxMaterial.wireframe = true;
       } else if (args[0] === "matcap") {
         boxMaterial = new THREE.MeshMatcapMaterial();
         boxMaterial.matcap = matcapTexture;
+      } else if (args[0] === "solid") {
+        boxMaterial = new THREE.MeshBasicMaterial({ color: "black" });
       } else {
         setError(`Line ${line}: material got an unknown argument.`);
         return;
