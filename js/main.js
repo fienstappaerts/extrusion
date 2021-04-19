@@ -51,7 +51,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color("white");
 
 const textureLoader = new THREE.TextureLoader();
-const matcapTexture = textureLoader.load("./img/matcap_6.png");
+const matcapTexture = textureLoader.load("./img/matcap_1.png");
 
 const geometryGroup = new THREE.Group();
 scene.add(geometryGroup);
@@ -61,6 +61,8 @@ let boxMaterial;
 
 const gridHelper = new THREE.GridHelper(500, 500, "lightgrey", "lightgrey");
 scene.add(gridHelper);
+
+//500, 500, "lightgrey", "lightgrey"
 
 buildGeometry();
 
@@ -227,7 +229,7 @@ function buildVolume() {
         return;
       }
       if (args[0] === "wireframe") {
-        boxMaterial = new THREE.MeshBasicMaterial({ color: "blue" });
+        boxMaterial = new THREE.MeshBasicMaterial({ color: "black" });
         boxMaterial.wireframe = true;
       } else if (args[0] === "matcap") {
         boxMaterial = new THREE.MeshMatcapMaterial();
