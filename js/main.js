@@ -312,3 +312,42 @@ document.getElementById("code").addEventListener("input", (e) => {
   instructions = e.target.value;
   buildGeometry();
 });
+
+document.getElementById("save").addEventListener("click", () => {
+  const codeArea = document.getElementById("code");
+  const code = codeArea.value;
+  db.collection("sketches")
+    .add({
+      code,
+    })
+    .then((docRef) => {
+      console.log("Document written with ID: ", docRef.id);
+      history.pushState({ sketchId: docRef.id }, "", `/?sketch=${docRef.id}`);
+    })
+    .catch((error) => {
+      console.error("Error adding document: ", error);
+      alert("Error getting sketch: " + error);
+    });
+});
+
+const sketchId = document.location.search.split("?sketch=")[1];
+console.log(sketchId);
+if (sketchId) {
+  const docRef = db.collection("sketches").doc(sketchId);
+  docRef
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        const sketch = doc.data();
+        document.getElementById("code").value = sketch.code;
+        instructions = sketch.code;
+        buildGeometry();
+      } else {
+        alert("Sketch not found.");
+      }
+    })
+    .catch((error) => {
+      console.log("Error getting document:", error);
+      alert("Error getting sketch: " + error);
+    });
+}

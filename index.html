@@ -16,9 +16,29 @@
         <div class="split-top-bottom">
           <textarea name="" id="code" cols="30" rows="10">box 2 3 4</textarea>
           <pre id="error"></pre>
+          <button id="save" style="position: absolute; top: 5px; right: 5px">
+            Save
+          </button>
         </div>
       </div>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/8.5.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.5.0/firebase-firestore.js"></script>
+    <script>
+      // Your web app's Firebase configuration
+      var firebaseConfig = {
+        apiKey: "AIzaSyCQmCJbQhFCOd3RJp0Xu5W7SWrvvwemPK0",
+        authDomain: "masterproef-84d88.firebaseapp.com",
+        projectId: "masterproef-84d88",
+        storageBucket: "masterproef-84d88.appspot.com",
+        messagingSenderId: "275372552622",
+        appId: "1:275372552622:web:0fce65e2d6e9c3ea1f983f",
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+    </script>
+
     <script src="./third_party/three.min.js"></script>
     <script src="./third_party/OrbitControls.js"></script>
     <script src="./js/main.js"></script>
