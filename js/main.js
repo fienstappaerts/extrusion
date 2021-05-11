@@ -215,6 +215,9 @@ function buildVolume() {
     } else if (command === "lsys") {
       rule = args[0];
       buildLSystem(rule, tx, ty, tz);
+    } else if (command === "name") {
+      rule = args[0];
+      buildNameSystem(rule, tx, ty, tz);
     } else if (command === "group") {
       if (args.length !== 1) {
         setError(`Line ${line}: group needs one argument, e.g. group 5`);
@@ -238,6 +241,17 @@ function buildVolume() {
         boxMaterial = new THREE.MeshBasicMaterial({ color: "black" });
       } else {
         setError(`Line ${line}: material got an unknown argument.`);
+        return;
+      }
+    } else if (command === "grid") {
+      if (args.length !== 1) {
+        setError(`Line ${line}: grid needs one argument, e.g. grid on`);
+        return;
+      }
+      if (args[0] === "on") {
+        gridHelper = new THREE.GridHelper(500, 500, "lightgrey", "lightgrey");
+      } else {
+        setError(`Line ${line}: grid got an unknown argument.`);
         return;
       }
     } else if (command.trim() === "" || command.trim()[0] === "#") {
@@ -270,6 +284,36 @@ function buildLSystem(rule, startTx, startTy, startTz) {
       angle += Math.PI / 2;
     } else if (letter === "-") {
       angle -= Math.PI / 2;
+    }
+  }
+}
+
+function buildNameSystem(rule, startTx, startTy, startTz) {
+  let tx = startTx;
+  let ty = startTy;
+  let tz = startTz;
+
+  let angle = 0;
+
+  for (let letter of rule) {
+    if (letter === "A") {
+      vset(tx, ty, tz);
+      tx += Math.round(Math.cos(angle));
+      ty += 0;
+      tz += Math.round(Math.sin(angle));
+    } else if (letter === "B") {
+      tx += Math.round(Math.cos(angle));
+      ty += 0;
+      tz += Math.round(Math.sin(angle));
+    } else if (letter === "C") {
+      angle += Math.PI / 2;
+    } else if (letter === "D") {
+      angle -= Math.PI / 2;
+    } else if (letter === "E") {
+      vset(tx, ty, tz) * 2;
+      tx += Math.round(Math.cos(angle));
+      ty += 0;
+      tz += Math.round(Math.sin(angle));
     }
   }
 }
