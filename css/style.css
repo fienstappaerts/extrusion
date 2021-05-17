@@ -1,5 +1,5 @@
 :root {
-  --background-color: #f0f0f0;
+  --background-color: #f7f7f7;
 }
 
 * {
@@ -10,11 +10,40 @@
 
 body {
   overflow: hidden;
-  background-color: var(--background-color);
+  /*   background-color: var(--background-color);
   color: rgb(122, 105, 105);
   font-family: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
+    "Courier New", monospace; */
+
+  font-family: "Jura", sans-serif;
+  color: blue;
+  font-size: 18px;
+  background-color: white;
 }
+
+.header {
+  font-size: 20px;
+  padding-left: 8px;
+  margin-bottom: 0px;
+  margin-top: 20px;
+}
+
+.header_name {
+  text-align: right;
+  padding-right: 10px;
+  position: relative;
+  text-decoration: none;
+  color: blue;
+}
+.header_name :hover {
+  text-decoration: underline;
+}
+
+.header_title {
+  position: absolute;
+  text-align: left;
+}
+
 .app {
   height: 100vh;
   width: 100vw;
@@ -24,7 +53,8 @@ body {
 textarea {
   font-family: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono",
     "Courier New", monospace;
-  color: rgb(122, 105, 105);
+  /* color: rgb(122, 105, 105); */
+  color: blue;
   background-color: var(--background-color);
   border: none;
   outline: none;
@@ -34,7 +64,7 @@ textarea {
 
 pre {
   padding: 10px;
-  color: red;
+  color: blue;
   background-color: var(--background-color);
 }
 
@@ -50,14 +80,24 @@ pre {
   grid-gap: 2px;
   width: 100%;
   height: 100%;
-  background: #666;
+  background: white;
 }
 
 .split-top-bottom {
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 2fr 1fr;
   grid-gap: 2px;
   width: 100%;
   height: 100%;
-  background: #666;
+  background: white;
+}
+
+.save {
+  position: absolute;
+  right: 8px;
+  margin-top: 8px;
+  color: blue;
+  background-color: var(--background-color);
+  border: none;
+  text-decoration: none;
 }
