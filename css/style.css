@@ -19,6 +19,7 @@ body {
   color: blue;
   font-size: 18px;
   background-color: white;
+  font-size: 14px;
 }
 
 .header {
@@ -92,11 +93,15 @@ pre {
   background: white;
 }
 
-.save {
+#save {
   position: absolute;
   right: 8px;
   margin-top: 8px;
   color: blue;
   background-color: var(--background-color);
   border: none;
+}
+
+#save :hover {
+  text-decoration: underline;
 }
