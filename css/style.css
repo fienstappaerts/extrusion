@@ -17,9 +17,7 @@ body {
 
   font-family: "Jura", sans-serif;
   color: blue;
-  font-size: 18px;
   background-color: white;
-  font-size: 14px;
 }
 
 .header {
@@ -93,15 +91,19 @@ pre {
   background: white;
 }
 
-#save {
+button {
   position: absolute;
   right: 8px;
   margin-top: 8px;
+  margin-left: 20px;
+  margin-bottom: 20px;
   color: blue;
   background-color: var(--background-color);
   border: none;
+  text-decoration: none;
 }
 
-#save :hover {
+button:hover {
+  color: black;
   text-decoration: underline;
 }
