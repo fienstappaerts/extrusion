@@ -225,9 +225,6 @@ function buildVolume() {
     } else if (command === "lsys") {
       rule = args[0];
       buildLSystem(rule, tx, ty, tz);
-    } else if (command === "name") {
-      rule = args[0];
-      buildNameSystem(rule, tx, ty, tz);
     } else if (command === "group") {
       if (args.length !== 1) {
         setError(`Line ${line}: group needs one argument, e.g. group 5`);
