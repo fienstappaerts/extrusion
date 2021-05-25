@@ -53,8 +53,6 @@ const vingroup = (x, y, z, group) => {
 const canvas = document.querySelector("canvas.webgl");
 const scene = new THREE.Scene();
 
-scene.background = new THREE.Color("white");
-
 const textureLoader = new THREE.TextureLoader();
 const matcapTexture = textureLoader.load("./img/matcap_6.png");
 
@@ -260,12 +258,7 @@ function buildVolume() {
         );
         return;
       }
-      if (args[0] === "black") {
-        scene.background = new THREE.Color("black");
-      } else {
-        setError(`Line ${line}: background got an unknown argument.`);
-        return;
-      }
+      scene.background = new THREE.Color(args[0]);
     } else if (command === "grid") {
       if (args.length !== 1) {
         setError(`Line ${line}: grid needs one argument, e.g. grid on`);
@@ -315,6 +308,8 @@ function buildLSystem(rule, startTx, startTy, startTz) {
 
 function buildGeometry() {
   clearError();
+  scene.background = new THREE.Color("white");
+  gridHelper.visible = true;
 
   while (geometryGroup.children.length) {
     geometryGroup.remove(geometryGroup.children[0]);
