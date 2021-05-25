@@ -1,8 +1,13 @@
-let instructions = `reset
+let instructions = `
+grid on
+material matcap
+
+reset
 lsys FF+FFFFF
 translate 10 0 0
 lsys FF+FFF+FFFFF
-extrude 5`;
+extrude 5
+`;
 
 document.getElementById("code").textContent = instructions;
 
@@ -51,15 +56,20 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color("white");
 
 const textureLoader = new THREE.TextureLoader();
-const matcapTexture = textureLoader.load("./img/matcap_1.png");
+const matcapTexture = textureLoader.load("./img/matcap_6.png");
 
 const geometryGroup = new THREE.Group();
 scene.add(geometryGroup);
 
-const boxGeometry = new THREE.BoxBufferGeometry(0.98, 0.98, 0.98);
+// const boxGeometry = new THREE.BoxBufferGeometry(0.98, 0.98, 0.98);
+const boxGeometry = new THREE.BoxBufferGeometry(0.99, 0.99, 0.99);
+// const boxGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
+
 let boxMaterial;
 
 const gridHelper = new THREE.GridHelper(500, 500, "lightgrey", "lightgrey");
+gridHelper.position.y = -0.5;
+gridHelper.visible = false;
 scene.add(gridHelper);
 
 //500, 500, "lightgrey", "lightgrey"
@@ -232,7 +242,7 @@ function buildVolume() {
         return;
       }
       if (args[0] === "wireframe") {
-        boxMaterial = new THREE.MeshBasicMaterial({ color: "black" });
+        boxMaterial = new THREE.MeshBasicMaterial({ color: "white" });
         boxMaterial.wireframe = true;
       } else if (args[0] === "matcap") {
         boxMaterial = new THREE.MeshMatcapMaterial();
@@ -243,13 +253,28 @@ function buildVolume() {
         setError(`Line ${line}: material got an unknown argument.`);
         return;
       }
+    } else if (command === "background") {
+      if (args.length !== 1) {
+        setError(
+          `Line ${line}: background needs one argument, e.g. background black`
+        );
+        return;
+      }
+      if (args[0] === "black") {
+        scene.background = new THREE.Color("black");
+      } else {
+        setError(`Line ${line}: background got an unknown argument.`);
+        return;
+      }
     } else if (command === "grid") {
       if (args.length !== 1) {
         setError(`Line ${line}: grid needs one argument, e.g. grid on`);
         return;
       }
       if (args[0] === "on") {
-        gridHelper = new THREE.GridHelper(500, 500, "lightgrey", "lightgrey");
+        gridHelper.visible = true;
+      } else if (args[0] === "off") {
+        gridHelper.visible = false;
       } else {
         setError(`Line ${line}: grid got an unknown argument.`);
         return;
@@ -284,36 +309,6 @@ function buildLSystem(rule, startTx, startTy, startTz) {
       angle += Math.PI / 2;
     } else if (letter === "-") {
       angle -= Math.PI / 2;
-    }
-  }
-}
-
-function buildNameSystem(rule, startTx, startTy, startTz) {
-  let tx = startTx;
-  let ty = startTy;
-  let tz = startTz;
-
-  let angle = 0;
-
-  for (let letter of rule) {
-    if (letter === "A") {
-      vset(tx, ty, tz);
-      tx += Math.round(Math.cos(angle));
-      ty += 0;
-      tz += Math.round(Math.sin(angle));
-    } else if (letter === "B") {
-      tx += Math.round(Math.cos(angle));
-      ty += 0;
-      tz += Math.round(Math.sin(angle));
-    } else if (letter === "C") {
-      angle += Math.PI / 2;
-    } else if (letter === "D") {
-      angle -= Math.PI / 2;
-    } else if (letter === "E") {
-      vset(tx, ty, tz) * 2;
-      tx += Math.round(Math.cos(angle));
-      ty += 0;
-      tz += Math.round(Math.sin(angle));
     }
   }
 }
