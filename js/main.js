@@ -15,9 +15,12 @@ const MAX_WIDTH = 256;
 const MAX_HEIGHT = 256;
 const MAX_DEPTH = 256;
 
+const LINE_RE = /^(\s*)([a-z][a-z0-9]+)\s*(.*)\s*$/;
+
 const volume = new Uint8Array(MAX_WIDTH * MAX_HEIGHT * MAX_DEPTH);
 
 let currentGroup = 1;
+let currentLine = 0;
 
 const vset = (x, y, z) => {
   if (x < 0 || x >= MAX_WIDTH) return;
@@ -143,12 +146,14 @@ function buildVolume() {
   let ty = Math.round(MAX_HEIGHT / 2);
   let tz = Math.round(MAX_DEPTH / 2);
 
-  // let geometry;
-  for (let line = 1; line <= lines.length; line++) {
-    const [command, ...args] = lines[line - 1].trim().split(/\s+/);
-    if (command === "box") {
+  let line = 0;
+
+  let commandMap = {
+    box: (args) => {
       if (args.length !== 3) {
-        setError(`Line ${line}: box needs three arguments, e.g. box 2 4 5`);
+        setError(
+          `Line ${currentLine}: box needs three arguments, e.g. box 2 4 5`
+        );
         return;
       }
       const width = parseInt(args[0]);
@@ -161,9 +166,12 @@ function buildVolume() {
           }
         }
       }
-    } else if (command === "plane") {
+    },
+    plane: (args) => {
       if (args.length !== 2) {
-        setError(`Line ${line}: plane needs two arguments, e.g. plane 4 8`);
+        setError(
+          `Line ${currentLine}: plane needs two arguments, e.g. plane 4 8`
+        );
         return;
       }
       const width = parseInt(args[0]);
@@ -173,10 +181,11 @@ function buildVolume() {
           vset(tx + x, ty, tz + z);
         }
       }
-    } else if (command === "extrude") {
+    },
+    extrude: (args) => {
       if (args.length !== 1 && args.length !== 3) {
         setError(
-          `Line ${line}: extrude needs one or three arguments, e.g. 'extrude 10' or 'extrude 10 group 3'`
+          `Line ${currentLine}: extrude needs one or three arguments, e.g. 'extrude 10' or 'extrude 10 group 3'`
         );
         return;
       }
@@ -184,13 +193,13 @@ function buildVolume() {
       if (args.length === 3) {
         if (args[1] !== "group") {
           setError(
-            `Line ${line}: extrude needs a group argument, e.g. 'extrude 10 group 3'`
+            `Line ${currentLine}: extrude needs a group argument, e.g. 'extrude 10 group 3'`
           );
           return;
         }
         groupToCheck = parseInt(args[2]);
         if (groupToCheck === 0) {
-          setError(`Line ${line}: extrude group can not be zero.`);
+          setError(`Line ${currentLine}: extrude group can not be zero.`);
           return;
         }
       }
@@ -206,36 +215,37 @@ function buildVolume() {
           }
         }
       }
-    } else if (command === "translate") {
+    },
+    translate: (args) => {
       if (args.length !== 3) {
         setError(
-          `Line ${line}: translate needs three arguments, e.g. translate 2 4 5`
+          `Line ${currentLine}: translate needs three arguments, e.g. translate 2 4 5`
         );
         return;
       }
       tx += parseInt(args[0]);
       ty += parseInt(args[1]);
       tz += parseInt(args[2]);
-    } else if (command === "reset") {
+    },
+    reset: () => {
       tx = Math.round(MAX_WIDTH / 2);
       ty = Math.round(MAX_HEIGHT / 2);
       tz = Math.round(MAX_DEPTH / 2);
-    } else if (command === "lsys") {
-      rule = args[0];
-      buildLSystem(rule, tx, ty, tz);
-    } else if (command === "name") {
-      rule = args[0];
-      buildNameSystem(rule, tx, ty, tz);
-    } else if (command === "group") {
+    },
+    lsys: (args) => {
+      buildLSystem(args[0], tx, ty, tz);
+    },
+    group: (args) => {
       if (args.length !== 1) {
-        setError(`Line ${line}: group needs one argument, e.g. group 5`);
+        setError(`Line ${currentLine}: group needs one argument, e.g. group 5`);
         return;
       }
       currentGroup = parseInt(args[0]);
-    } else if (command === "material") {
+    },
+    material: (args) => {
       if (args.length !== 1) {
         setError(
-          `Line ${line}: material needs one argument, e.g. material wireframe`
+          `Line ${currentLine}: material needs one argument, e.g. material wireframe`
         );
         return;
       }
@@ -246,22 +256,26 @@ function buildVolume() {
         boxMaterial = new THREE.MeshMatcapMaterial();
         boxMaterial.matcap = matcapTexture;
       } else if (args[0] === "solid") {
-        boxMaterial = new THREE.MeshBasicMaterial({ color: "black" });
+        boxMaterial = new THREE.MeshBasicMaterial({ color });
       } else {
-        setError(`Line ${line}: material got an unknown argument.`);
+        setError(`Line ${currentLine}: material got an unknown argument.`);
         return;
       }
-    } else if (command === "background") {
+    },
+
+    background: (args) => {
       if (args.length !== 1) {
         setError(
-          `Line ${line}: background needs one argument, e.g. background black`
+          `Line ${currentLine}: background needs one argument, e.g. background black`
         );
         return;
       }
-      scene.background = new THREE.Color(args[0]);
-    } else if (command === "grid") {
+      scene.background = new THREE.Color(color);
+    },
+
+    grid: (args) => {
       if (args.length !== 1) {
-        setError(`Line ${line}: grid needs one argument, e.g. grid on`);
+        setError(`Line ${currentLine}: grid needs one argument, e.g. grid on`);
         return;
       }
       if (args[0] === "on") {
@@ -269,14 +283,86 @@ function buildVolume() {
       } else if (args[0] === "off") {
         gridHelper.visible = false;
       } else {
-        setError(`Line ${line}: grid got an unknown argument.`);
+        setError(`Line ${currentLine}: grid got an unknown argument.`);
         return;
       }
-    } else if (command.trim() === "" || command.trim()[0] === "#") {
-      // Empty line or comment
+    },
+  };
+
+  try {
+    const statements = parseCode(instructions, commandMap);
+    executeStatements(statements, commandMap);
+  } catch (e) {
+    setError(e.message);
+  }
+}
+
+function parseCode(source, commandMap) {
+  const lines = source.split("\n");
+  const statements = [];
+  let currentIndentLevel = 0;
+  let currentFunction = null;
+  for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+    const line = lines[lineIndex].trimEnd();
+    if (line.trim().length === 0) continue;
+    if (line.trim().startsWith("#")) continue;
+    const result = LINE_RE.exec(line);
+    if (!result) {
+      throw new Error(
+        `[Line ${lineIndex + 1}]: I don't understand "${currentLine}".`
+      );
+    }
+    let [_, indent, command, args] = result;
+    args = args.split(/\s+/);
+    const indentLevel = indent.length / 2;
+    if (Math.floor(indentLevel) !== indentLevel) {
+      throw new Error(
+        `[Line ${lineIndex + 1}]: Invalid indent (not multiple of 2).`
+      );
+    }
+    if (currentIndentLevel !== indentLevel) {
+      if (!currentFunction) {
+        throw new Error(
+          `[Line ${lineIndex + 1}]: Indent changed, but not in function.`
+        );
+      }
+      currentFunction = null;
+      currentIndentLevel = 0;
+    }
+    if (command === "fn") {
+      const name = args[0];
+      currentFunction = {
+        args: args.slice(1),
+        statements: [],
+      };
+      commandMap[name] = currentFunction;
+      currentIndentLevel = 1;
     } else {
-      setError(`Line ${line}: unknown command "${command}".`);
-      return;
+      const statement = { command, args, line: lineIndex + 1 };
+      if (currentFunction) {
+        currentFunction.statements.push(statement);
+      } else {
+        statements.push(statement);
+      }
+    }
+  }
+  return statements;
+}
+
+function executeStatements(statements, commandMap) {
+  for (let i = 0; i < statements.length; i++) {
+    const statement = statements[i];
+    currentLine = statement.line;
+    const fn = commandMap[statement.command];
+    if (typeof fn === "function") {
+      fn(statement.args);
+    } else if (typeof fn === "object") {
+      // FIXME do something with scope args here
+      executeStatements(fn.statements, commandMap);
+    } else {
+      throw new Error(
+        `[Line ${statement.line}]: Command "${statement.command}" not found.`
+      );
     }
   }
 }
@@ -365,7 +451,7 @@ document.getElementById("save").addEventListener("click", () => {
 });
 
 const sketchId = document.location.search.split("?sketch=")[1];
-console.log(sketchId);
+// console.log(sketchId);
 if (sketchId) {
   const docRef = db.collection("sketches").doc(sketchId);
   docRef
