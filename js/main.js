@@ -231,18 +231,11 @@ function buildVolume() {
       tx = Math.round(MAX_WIDTH / 2);
       ty = Math.round(MAX_HEIGHT / 2);
       tz = Math.round(MAX_DEPTH / 2);
-<<<<<<< HEAD
-    } else if (command === "lsys") {
-      rule = args[0];
-      buildLSystem(rule, tx, ty, tz);
-    } else if (command === "group") {
-=======
     },
     lsys: (args) => {
       buildLSystem(args[0], tx, ty, tz);
     },
     group: (args) => {
->>>>>>> 32d89e13aeb93b659d911c48ad4fbaa320b94643
       if (args.length !== 1) {
         setError(`Line ${currentLine}: group needs one argument, e.g. group 5`);
         return;
