@@ -62,6 +62,7 @@ textarea {
 }
 
 pre {
+  white-space: normal;
   padding: 10px;
   color: blue;
   background-color: var(--background-color);

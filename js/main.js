@@ -250,7 +250,7 @@ function buildVolume() {
         return;
       }
       if (args[0] === "wireframe") {
-        boxMaterial = new THREE.MeshBasicMaterial({ color: "white" });
+        boxMaterial = new THREE.MeshBasicMaterial({ color: "black" });
         boxMaterial.wireframe = true;
       } else if (args[0] === "matcap") {
         boxMaterial = new THREE.MeshMatcapMaterial();
@@ -471,3 +471,5 @@ if (sketchId) {
       alert("Error getting sketch: " + error);
     });
 }
+
+console.log(color);
