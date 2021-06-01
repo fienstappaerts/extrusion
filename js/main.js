@@ -243,9 +243,9 @@ function buildVolume() {
       currentGroup = parseInt(args[0]);
     },
     material: (args) => {
-      if (args.length !== 1) {
+      if (args.length !== 1 && args.length !== 2) {
         setError(
-          `Line ${currentLine}: material needs one argument, e.g. material wireframe`
+          `Line ${currentLine}: material needs one or two argument(s), e.g. material wireframe or material solid blue`
         );
         return;
       }
@@ -256,7 +256,11 @@ function buildVolume() {
         boxMaterial = new THREE.MeshMatcapMaterial();
         boxMaterial.matcap = matcapTexture;
       } else if (args[0] === "solid") {
-        boxMaterial = new THREE.MeshBasicMaterial({ color });
+        let customColor = "black";
+        if (args.length === 2) {
+          customColor = args[1];
+        }
+        boxMaterial = new THREE.MeshBasicMaterial({ color: customColor });
       } else {
         setError(`Line ${currentLine}: material got an unknown argument.`);
         return;
@@ -266,11 +270,12 @@ function buildVolume() {
     background: (args) => {
       if (args.length !== 1) {
         setError(
-          `Line ${currentLine}: background needs one argument, e.g. background black`
+          `Line ${currentLine}: background needs one argument, e.g. background blue`
         );
         return;
       }
-      scene.background = new THREE.Color(color);
+      let customColor = args[0];
+      scene.background = new THREE.Color(customColor);
     },
 
     grid: (args) => {
@@ -293,7 +298,7 @@ function buildVolume() {
     const statements = parseCode(instructions, commandMap);
     executeStatements(statements, commandMap);
   } catch (e) {
-    setError(e.message);
+    setError(e.stack);
   }
 }
 
@@ -471,5 +476,3 @@ if (sketchId) {
       alert("Error getting sketch: " + error);
     });
 }
-
-console.log(color);
