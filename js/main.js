@@ -100,15 +100,15 @@ window.addEventListener("resize", () => {
 });
 
 // PERSPECTIVE CAMERA
-/* const camera = new THREE.PerspectiveCamera(
+const camera = new THREE.PerspectiveCamera(
   75,
   globalSize.width / globalSize.height,
   1,
   1024
-); */
+);
 
 // ORTHOGRAPIC CAMERA
-const camera = new THREE.OrthographicCamera(-20, 20, 20, -20, 1, 1024);
+//const camera = new THREE.OrthographicCamera(-20, 20, 20, -20, 1, 1024);
 
 camera.position.y = 5;
 camera.position.z = 15;
