@@ -68,7 +68,7 @@ const boxGeometry = new THREE.BoxBufferGeometry(0.99, 0.99, 0.99);
 
 let boxMaterial;
 
-const gridHelper = new THREE.GridHelper(500, 500, "lightgrey", "lightgrey");
+const gridHelper = new THREE.GridHelper(256, 256, "lightgrey", "lightgrey");
 gridHelper.position.y = -0.5;
 gridHelper.visible = false;
 scene.add(gridHelper);
@@ -99,12 +99,17 @@ window.addEventListener("resize", () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
-const camera = new THREE.PerspectiveCamera(
+// PERSPECTIVE CAMERA
+/* const camera = new THREE.PerspectiveCamera(
   75,
   globalSize.width / globalSize.height,
   1,
   1024
-);
+); */
+
+// ORTHOGRAPIC CAMERA
+const camera = new THREE.OrthographicCamera(-20, 20, 20, -20, 1, 1024);
+
 camera.position.y = 5;
 camera.position.z = 15;
 scene.add(camera);
