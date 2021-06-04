@@ -120,6 +120,8 @@ const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
   antialias: true,
 });
+const svgRenderer = new THREE.SVGRenderer();
+svgRenderer.overdraw = 0.0; // Maak dit groter of kleiner als er gaten tussen de blokken zijn
 
 renderer.setSize(globalSize.width, globalSize.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -129,6 +131,26 @@ function animate() {
   window.requestAnimationFrame(animate);
 }
 animate();
+
+function downloadText(filename, text) {
+  const element = document.createElement("a");
+  element.setAttribute(
+    "href",
+    "data:text/plain;charset=utf-8, " + encodeURIComponent(text)
+  );
+  element.setAttribute("download", filename);
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+}
+
+function renderSvg() {
+  const svgScene = buildSvgScene();
+  svgRenderer.setSize(globalSize.width, globalSize.height);
+  svgRenderer.render(svgScene, camera);
+  const svgCode = svgRenderer.domElement.outerHTML;
+  downloadText("export.svg", svgCode);
+}
 
 function clearError() {
   document.getElementById("error").textContent = "";
@@ -438,6 +460,38 @@ function buildGeometry() {
   }
 }
 
+function buildSvgScene() {
+  const svgScene = new THREE.Scene();
+  if (gridHelper.visible) {
+    console.log("show grid heper");
+    const svgGridHelper = new THREE.GridHelper(
+      256,
+      256,
+      "lightgrey",
+      "lightgrey"
+    );
+    svgGridHelper.position.y = -0.5;
+    svgScene.add(svgGridHelper);
+  }
+
+  for (let x = 0; x < MAX_WIDTH; x++) {
+    for (let y = 0; y < MAX_HEIGHT; y++) {
+      for (let z = 0; z < MAX_DEPTH; z++) {
+        if (vfull(x, y, z)) {
+          const mesh = new THREE.Mesh(boxGeometry, boxMaterial);
+          mesh.position.set(
+            x - MAX_WIDTH / 2,
+            y - MAX_HEIGHT / 2,
+            z - MAX_DEPTH / 2
+          );
+          svgScene.add(mesh);
+        }
+      }
+    }
+  }
+  return svgScene;
+}
+
 document.getElementById("code").addEventListener("input", (e) => {
   instructions = e.target.value;
   buildGeometry();
@@ -459,6 +513,8 @@ document.getElementById("save").addEventListener("click", () => {
       alert("Error getting sketch: " + error);
     });
 });
+
+document.getElementById("exportSvg").addEventListener("click", renderSvg);
 
 const sketchId = document.location.search.split("?sketch=")[1];
 // console.log(sketchId);
