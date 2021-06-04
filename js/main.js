@@ -91,8 +91,11 @@ window.addEventListener("resize", () => {
   globalSize.height = bounds.height;
 
   // Update camera
-  camera.aspect = globalSize.width / globalSize.height;
-  camera.updateProjectionMatrix();
+  perspCamera.aspect = globalSize.width / globalSize.height;
+  perspCamera.updateProjectionMatrix();
+
+  orthoCamera.aspect = globalSize.width / globalSize.height;
+  orthoCamera.updateProjectionMatrix();
 
   // Update renderer
   renderer.setSize(globalSize.width, globalSize.height);
@@ -100,21 +103,26 @@ window.addEventListener("resize", () => {
 });
 
 // PERSPECTIVE CAMERA
-const camera = new THREE.PerspectiveCamera(
+const perspCamera = new THREE.PerspectiveCamera(
   75,
   globalSize.width / globalSize.height,
   1,
   1024
 );
+perspCamera.position.y = 5;
+perspCamera.position.z = 15;
+scene.add(perspCamera);
 
 // ORTHOGRAPIC CAMERA
-//const camera = new THREE.OrthographicCamera(-20, 20, 20, -20, 1, 1024);
+const orthoCamera = new THREE.OrthographicCamera(-20, 20, 20, -20, 1, 1024);
+orthoCamera.position.y = 5;
+orthoCamera.position.z = 15;
+scene.add(orthoCamera);
 
-camera.position.y = 5;
-camera.position.z = 15;
-scene.add(camera);
+let currentCamera = perspCamera;
 
-const controls = new THREE.OrbitControls(camera, canvas);
+const perspControls = new THREE.OrbitControls(perspCamera, canvas);
+const orthoControls = new THREE.OrbitControls(orthoCamera, canvas);
 
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
@@ -137,7 +145,7 @@ function debounce(func, timeout) {
 }
 
 function animate() {
-  renderer.render(scene, camera);
+  renderer.render(scene, currentCamera);
   window.requestAnimationFrame(animate);
 }
 animate();
@@ -157,7 +165,7 @@ function downloadText(filename, text) {
 function renderSvg() {
   const svgScene = buildSvgScene();
   svgRenderer.setSize(globalSize.width, globalSize.height);
-  svgRenderer.render(svgScene, camera);
+  svgRenderer.render(svgScene, currentCamera);
   const svgCode = svgRenderer.domElement.outerHTML;
   downloadText("export.svg", svgCode);
 }
@@ -329,6 +337,25 @@ function buildVolume() {
         return;
       }
     },
+
+    camera: (args) => {
+      if (args.length !== 1) {
+        setError(
+          `Line ${currentLine}: camera needs one argument, e.g. camera ortho`
+        );
+        return;
+      }
+      if (args[0] === "ortho") {
+        currentCamera = orthoCamera;
+      } else if (args[0] === "persp" || args[0] === "perspective") {
+        currentCamera = perspCamera;
+      } else {
+        setError(
+          `Line ${currentLine}: camera needs to be ortho or persp, e.g. camera ortho`
+        );
+        return;
+      }
+    },
   };
 
   try {
@@ -484,11 +511,12 @@ function buildSvgScene() {
     svgScene.add(svgGridHelper);
   }
 
+  const svgBoxGeometry = new THREE.BoxBufferGeometry(0.99, 0.99, 0.99);
   for (let x = 0; x < MAX_WIDTH; x++) {
     for (let y = 0; y < MAX_HEIGHT; y++) {
       for (let z = 0; z < MAX_DEPTH; z++) {
         if (vfull(x, y, z)) {
-          const mesh = new THREE.Mesh(boxGeometry, boxMaterial);
+          const mesh = new THREE.Mesh(svgBoxGeometry, boxMaterial);
           mesh.position.set(
             x - MAX_WIDTH / 2,
             y - MAX_HEIGHT / 2,
