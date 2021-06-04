@@ -126,6 +126,16 @@ svgRenderer.overdraw = 0.0; // Maak dit groter of kleiner als er gaten tussen de
 renderer.setSize(globalSize.width, globalSize.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+function debounce(func, timeout) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(this, args);
+    }, timeout);
+  };
+}
+
 function animate() {
   renderer.render(scene, camera);
   window.requestAnimationFrame(animate);
@@ -492,10 +502,15 @@ function buildSvgScene() {
   return svgScene;
 }
 
-document.getElementById("code").addEventListener("input", (e) => {
-  instructions = e.target.value;
+function onInput() {
+  const code = document.getElementById("code");
+  instructions = code.value;
   buildGeometry();
-});
+}
+
+const onDebouncedInput = debounce(onInput, 300);
+
+document.getElementById("code").addEventListener("input", onDebouncedInput);
 
 document.getElementById("save").addEventListener("click", () => {
   const codeArea = document.getElementById("code");
