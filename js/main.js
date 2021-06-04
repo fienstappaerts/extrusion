@@ -166,7 +166,8 @@ function renderSvg() {
   const svgScene = buildSvgScene();
   svgRenderer.setSize(globalSize.width, globalSize.height);
   svgRenderer.render(svgScene, currentCamera);
-  const svgCode = svgRenderer.domElement.outerHTML;
+  let svgCode = svgRenderer.domElement.outerHTML;
+  svgCode = svgCode.replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg"');
   downloadText("export.svg", svgCode);
 }
 
