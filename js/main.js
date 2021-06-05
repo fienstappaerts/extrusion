@@ -512,7 +512,7 @@ function buildSvgScene() {
     svgScene.add(svgGridHelper);
   }
 
-  const svgBoxGeometry = new THREE.BoxBufferGeometry(0.99, 0.99, 0.99);
+  const svgBoxGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
   for (let x = 0; x < MAX_WIDTH; x++) {
     for (let y = 0; y < MAX_HEIGHT; y++) {
       for (let z = 0; z < MAX_DEPTH; z++) {
