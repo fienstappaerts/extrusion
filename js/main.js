@@ -1,12 +1,443 @@
+let prelude = `
+
+
+fn molecule1
+  box 1 1 1
+
+fn molecule2
+  lsys F+FF
+
+fn molecule21
+  lsys F+FF
+
+fn molecule22
+  lsys +F+FF
+
+fn molecule3
+  lsys +FFF
+
+fn molecule31
+  lsys +FFF
+
+fn molecule32
+  lsys FFF
+
+fn molecule4
+  lsys F+FF
+  translate  1 0 -1
+  box 1 1 1
+
+fn molecule41
+  lsys F+FF
+  translate  1 0 -1
+  box 1 1 1
+
+fn molecule42
+  box 1 1 1
+  translate  -2 0 0
+  lsys F+FF
+
+fn molecule43
+  lsys --F-FF
+  translate  -1 0 -1
+  box 1 1 1
+
+fn molecule44
+  box 1 1 1
+  translate  -2 0 0
+  lsys F-FF
+
+fn molecule5
+  lsys F+FF+FF
+
+fn molecule51
+  lsys F+FF+FF
+
+fn molecule52
+  lsys +F-FF-FF
+
+fn molecule6
+  lsys F+FF
+  translate 2 0 0
+  box 1 1 1
+  translate -1 0 -1
+  box 1 1 1
+
+fn molecule7
+  lsys F+FF+FF+FFF
+
+fn molecule8
+  plane 3 3
+
+fn organism1
+  molecule32
+  translate -1 0 0
+  molecule42
+  translate -1 0 2
+  molecule1
+
+fn organism2
+  molecule8
+  translate -1 0 2
+  molecule1
+  translate -3 0 -1
+  molecule32
+
+fn organism3
+  molecule8
+  translate -1 0 3
+  molecule7
+  translate -4 0 -2
+  molecule8
+
+fn organism4
+  molecule32
+  translate -1 0 0
+  molecule44
+  translate -3 0 -1
+  molecule52
+
+fn organism41
+  molecule32
+  translate -1 0 0
+  molecule44
+  translate -3 0 -1
+  molecule52
+
+fn organism42
+  molecule31
+  translate -1 0 -2
+  molecule41
+  translate -1 0 -3
+  molecule51
+
+fn organism5
+  molecule32
+  translate -2 0 0
+  molecule1
+  translate -2 0 0
+  molecule1
+
+fn organism6
+  molecule7
+  translate -3 0 1
+  molecule1
+  translate -2 0 0
+  molecule22
+
+fn organism7
+  molecule6
+  translate -1 0 4
+  molecule6
+  translate -2 0 1
+  molecule43
+
+fn organism8
+  molecule52
+  translate 2 0 2
+  molecule1
+  translate -3 0 1
+  molecule32
+
+fn line1
+  organism1
+  translate 4 0 15
+  organism1
+  translate 4 0 15
+  organism1
+  translate 4 0 15
+  organism1
+  translate 4 0 15
+  organism1 
+
+fn structure1
+  translate -10 0 -60
+  line1
+  translate -10 0 -80
+  line1
+  translate -10 0 -60
+  line1
+  translate -10 0 -80
+  line1
+  translate -10 0 -60
+  line1  
+  translate -10 0 -80
+  line1
+
+fn total1
+  structure1
+  translate 84 0 84
+  structure1
+  translate 170 0 0
+  structure1
+  translate 84 0 -84
+  structure1
+  extrude 8
+
+fn line2
+  organism2
+  translate 3 0 7
+  organism2
+  translate 3 0 7
+  organism2
+  translate 3 0 7
+  organism2
+  translate 3 0 7
+  organism2
+  translate 3 0 7
+  organism2
+  translate 3 0 7
+  organism2
+  translate 3 0 7
+  organism2
+  translate 3 0 7
+  organism2
+  translate 3 0 7
+  organism2 
+
+fn structure2
+  translate 9 0 -70
+  line2
+  translate 9 0 -70
+  line2
+  translate 9 0 -70
+  line2
+
+fn total2
+  structure2
+  structure2
+  structure2
+  structure2
+  structure2
+  extrude 3
+
+
+
+fn line3
+  group 1
+  organism3
+  translate  5 0 5
+  extrude 1 group 1
+  group 2
+  organism3 
+  translate  5 0 5
+  extrude 3 group 2
+  group 3
+  organism3 
+  translate  5 0 5
+  extrude 5 group 3
+
+fn structure3
+  line3
+
+fn total3
+  structure3
+
+
+fn line4
+  organism41
+  translate  10 0 15
+  organism42
+  translate  -10 0 5
+  organism41
+  translate  5 0 5
+  organism42
+  translate  5 0 5
+  organism41
+
+fn structure4 
+  line4
+  translate 20 0 0
+  line4
+
+fn total4
+  structure4
+  structure4
+  translate -30 0 -100
+  structure4
+  extrude 10
+
+fn line5
+  organism5
+  translate 4 4 5
+  organism5
+  translate 4 4 5
+  organism5
+  translate 4 -4 5
+  organism5
+  translate 4 -4 5
+  organism5
+
+fn structure5
+  line5
+  translate 0 0 -40
+  line5
+  translate 0 0 -40
+  line5
+  translate 0 0 -40
+  line5
+  line5
+  line5
+  line5
+
+fn total5
+  structure5
+  translate 0 0 -40
+  structure5
+  translate 0 0 -20
+  structure5
+  extrude 2
+
+fn total6
+  organism6
+  translate 5 3 2
+  organism6
+  translate 5 3 2
+  organism6
+  translate 5 -3 2
+  organism6
+  translate 5 3 2
+  organism6
+  translate 5 -3 2
+  organism6
+  translate 5 -3 2
+  organism6
+
+fn line7
+  organism7
+  translate 2 0 10
+  organism7
+  translate 2 10 5
+  organism7
+  translate 2 0 5
+  organism7
+  translate 2 0 5
+  organism7
+  translate 0 0 5  
+  organism7
+  translate 0 0 5
+  organism7
+  translate 0 0 5
+  organism7
+  translate 0 -10 5
+  organism7
+  translate 0 0 5
+  organism7
+
+
+fn structure7
+  translate 9 0 -70
+  line7
+  translate 9 0 -70
+  line7
+  translate 9 0 -70
+  line7
+
+
+fn total7
+  structure7
+  structure7
+  structure7
+  structure7
+  structure7
+  extrude 3
+
+
+fn line8
+  organism8
+  translate -10 0 -3
+  organism8
+  translate -10 0 -3
+  organism8
+  translate -10 0 -3
+  organism8
+  translate -10 0 -3
+  organism8
+  translate -10 0 -3
+  organism8
+  translate -10 0 -3
+  organism8
+
+fn structure8
+  translate 72 0 6
+  line8
+  translate 62 0 6
+  line8
+  translate 72 0 6
+  line8
+  translate 62 0 6
+  line8
+  translate 72 0 6
+  line8
+  translate 62 0 6
+  line8
+
+fn total8
+  structure8
+  structure8
+  translate -77 0 -200
+  structure8
+  structure8
+  structure8
+  structure8
+
+
+`;
+
 let instructions = `
 grid on
 material matcap
 
-reset
-lsys FF+FFFFF
-translate 10 0 0
-lsys FF+FFF+FFFFF
-extrude 5
+total1
+
+
+`;
+
+let help = `
+//information about instructions
+//build 
+
+plane x z
+box x y z 
+
+lsys Ff+-
+  F = box 1 1 1
+  f = break
+  + = rotate 90°
+  - = rotate -90°
+
+extrude #
+
+//move
+
+translate x y z
+
+//functions
+//you can call a function in another function
+
+fn name
+  build instructions
+
+name 
+
+//group
+
+group #
+ 
+//material and scene
+
+camera pers/ortho
+
+grid on/off
+
+background color
+
+material wireframe/matcap/solid
+
+
+
+
+
 `;
 
 document.getElementById("code").textContent = instructions;
@@ -172,7 +603,7 @@ function renderSvg() {
 }
 
 function clearError() {
-  document.getElementById("error").textContent = "";
+  document.getElementById("error").textContent = help;
 }
 
 function setError(error) {
@@ -185,8 +616,6 @@ function buildVolume() {
   currentGroup = 1;
   boxMaterial = new THREE.MeshMatcapMaterial();
   boxMaterial.matcap = matcapTexture;
-
-  const lines = instructions.trim().split("\n");
 
   let tx = Math.round(MAX_WIDTH / 2);
   let ty = Math.round(MAX_HEIGHT / 2);
@@ -360,10 +789,11 @@ function buildVolume() {
   };
 
   try {
-    const statements = parseCode(instructions, commandMap);
+    const allInstructions = prelude + instructions;
+    const statements = parseCode(allInstructions, commandMap);
     executeStatements(statements, commandMap);
   } catch (e) {
-    setError(e.stack);
+    setError(e.message);
   }
 }
 

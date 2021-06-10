@@ -61,6 +61,11 @@ textarea {
   resize: none;
 }
 
+#error #code {
+  font-size: 13px;
+  overflow: auto;
+}
+
 pre {
   white-space: normal;
   padding: 10px;
