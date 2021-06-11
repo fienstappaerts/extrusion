@@ -212,7 +212,6 @@ fn total2
   extrude 3
 
 
-
 fn line3
   group 1
   organism3
@@ -394,45 +393,94 @@ total1
 `;
 
 let help = `
-//information about instructions
-//build 
+// information about instructions
+
+--------------------------------
+
+// build instructions
+
+// box needs three commands e.g. box 8 5 6
+
+box x y z
+
+// plane needs two commands e.g. plane 5 10
 
 plane x z
-box x y z 
+
+// lsys can use as many of the 4 commands as you want
 
 lsys Ff+-
+
   F = box 1 1 1
   f = break
   + = rotate 90°
   - = rotate -90°
 
-extrude #
+// extrude needs one command e.g. extrude 5
 
-//move
+extrude y
+
+--------------------------------
+
+// move instructions
+
+// translate needs three commands e.g. translate 10 0 5
 
 translate x y z
 
-//functions
-//you can call a function in another function
+--------------------------------
 
-fn name
-  build instructions
+// function instructions
 
-name 
+// fn needs one name that you can choose yourself e.g. function molecule1
+// you can call a function in another function
+// the elements you add in the function need to indent two spaces
+// to make it work you need to call the name of the function
 
-//group
+fn randomname
+    build instructions
+randomname
+
+
+--------------------------------
+
+// group instructions 
+
+// group needs one command e.g. group 2
 
 group #
- 
-//material and scene
 
-camera pers/ortho
+// to extrude the group you already established e.g. extrude 10 group 2
 
-grid on/off
+extrude # group #
 
-background color
+--------------------------------
 
-material wireframe/matcap/solid
+// material and scene instructions
+
+// camera needs one command e.g. camera ortho
+
+camera pers
+or
+camera ortho
+
+// grid needs one command e.g. grid on
+
+grid on
+or
+grid off
+
+// background needs one command e.g. background yellow
+
+background value of a color
+
+// material needs one or two commands e.g. material wireframe or material solid red
+
+material solid value of a color
+or
+material wireframe
+or
+material matcap
 
 
 
