@@ -385,9 +385,12 @@ fn total8
 
 let instructions = `
 grid on
-material matcap
+material solid black
+
 
 total1
+
+camera ortho
 
 
 `;
@@ -399,88 +402,84 @@ let help = `
 
 // build instructions
 
-// box needs three commands e.g. box 8 5 6
-
-box x y z
+plane x z
 
 // plane needs two commands e.g. plane 5 10
 
-plane x z
+box x y z
 
-// lsys can use as many of the 4 commands as you want
+// box needs three commands e.g. box 8 5 6
 
 lsys Ff+-
-
   F = box 1 1 1
   f = break
   + = rotate 90°
   - = rotate -90°
 
-// extrude needs one command e.g. extrude 5
+// lsys can use as many of the 4 commands as you want e.g. lsys FFF+fFF-FFFFFFF
 
 extrude y
+
+// extrude needs one command e.g. extrude 5
 
 --------------------------------
 
 // move instructions
 
-// translate needs three commands e.g. translate 10 0 5
-
 translate x y z
+
+// translate needs three commands e.g. translate 10 0 5
 
 --------------------------------
 
 // function instructions
+
+fn randomname
+    build instructions
+randomname
 
 // fn needs one name that you can choose yourself e.g. function molecule1
 // you can call a function in another function
 // the elements you add in the function need to indent two spaces
 // to make it work you need to call the name of the function
 
-fn randomname
-    build instructions
-randomname
-
-
 --------------------------------
 
 // group instructions 
 
+group #
+
 // group needs one command e.g. group 2
 
-group #
+extrude # group #
 
 // to extrude the group you already established e.g. extrude 10 group 2
 
-extrude # group #
 
 --------------------------------
 
 // material and scene instructions
 
+camera persp/ortho
+
 // camera needs one command e.g. camera ortho
 
-camera pers
-or
-camera ortho
+grid on/off
 
 // grid needs one command e.g. grid on
 
-grid on
-or
-grid off
-
-// background needs one command e.g. background yellow
-
 background value of a color
 
-// material needs one or two commands e.g. material wireframe or material solid red
+// background needs one command e.g. background yellow
 
 material solid value of a color
 or
 material wireframe
 or
 material matcap
+
+// material needs one or two commands e.g. material wireframe or material solid red
+
 
 
 
