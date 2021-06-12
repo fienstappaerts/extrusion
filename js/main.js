@@ -662,8 +662,9 @@ const perspCamera = new THREE.PerspectiveCamera(
   1,
   1024
 );
-perspCamera.position.y = 5;
-perspCamera.position.z = 15;
+perspCamera.position.x = -15;
+perspCamera.position.y = 25;
+perspCamera.position.z = 40;
 scene.add(perspCamera);
 
 // ORTHOGRAPIC CAMERA
