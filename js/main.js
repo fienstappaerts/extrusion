@@ -384,13 +384,90 @@ fn total8
 `;
 
 let instructions = `
+
 grid on
 material solid black
+background white
 
+fn mol1
+  group 1
+  box 2 2 2
+  translate 5 0 0
+  box 1 1 10
+  translate 5 0 0
+  box 1 1 1
+  translate 5 0 0
 
-total1
+mol1
 
-camera ortho
+fn mol2
+  group 2
+  lsys FF+FFFffFFF-FFFFFFfF
+
+mol2
+
+fn org1
+  mol2
+  mol1
+  mol2
+
+org1
+
+fn org2
+  mol2
+  mol2
+
+org2
+
+fn comb1
+  org1 ​
+  translate 20 0 30
+  org1
+  translate -40 0 -40
+  org1 ​
+  translate 20 0 30
+  org1
+
+comb1
+
+fn comb2
+  org2​
+  org2
+  translate -30 0 0
+  org2​
+  translate 40 0 40
+  org1
+  org2​
+  org2
+  org2​
+  org1
+
+comb2
+
+fn total
+  translate -200 0 20
+  comb1
+  translate 40 0 -60
+  comb1
+  translate 40 0 -60
+  comb2
+  translate -180 0 -120
+  comb2
+  translate -200 0 20
+  comb1
+  translate 40 0 -60
+  comb1
+  translate 40 0 -60
+  comb2
+  comb2
+
+total
+
+extrude 10 group 1
+
+extrude 5 group 2
+ 
+
 
 
 `;
@@ -441,7 +518,7 @@ randomname
 // fn needs one name that you can choose yourself e.g. function molecule1
 // you can call a function in another function
 // the elements you add in the function need to indent two spaces
-// to make it work you need to call the name of the function
+// to make it work you need to call the name of the function afterwards
 
 --------------------------------
 
@@ -455,7 +532,6 @@ extrude # group #
 
 // to extrude the group you already established e.g. extrude 10 group 2
 
-
 --------------------------------
 
 // material and scene instructions
@@ -468,18 +544,17 @@ grid on/off
 
 // grid needs one command e.g. grid on
 
-background value of a color
+background any value of color
 
-// background needs one command e.g. background yellow
+// background needs one command e.g. background yellow or background #FF0000
 
-material solid value of a color
+material solid  and any value of color
 or
 material wireframe
 or
 material matcap
 
-// material needs one or two commands e.g. material wireframe or material solid red
-
+// material needs one or two commands e.g. material wireframe or material solid red or material solid #6BFF42
 
 
 
