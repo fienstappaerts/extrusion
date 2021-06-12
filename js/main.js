@@ -548,7 +548,7 @@ background any value of color
 
 // background needs one command e.g. background yellow or background #FF0000
 
-material solid  and any value of color
+material solid and any value of color
 or
 material wireframe
 or
